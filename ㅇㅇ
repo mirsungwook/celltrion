@@ -1,0 +1,32 @@
+import os
+import re
+
+def rename_files(folder_path):
+    # 폴더 내 파일 목록 가져오기
+    files = os.listdir(folder_path)
+    
+    # 전표 파일 이름 패턴 (정규 표현식)
+    pattern = re.compile(r"전표(\d{2})\.(\d{2})\.(\d{2})_(.+)\.pdf")
+    
+    for file in files:
+        match = pattern.match(file)
+        if match:
+            # 기존 파일명에서 연도, 월, 일, 문자 추출
+            yy, mm, dd, text = match.groups()
+            
+            # 새 파일명 생성
+            new_name = f"{yy}{mm}{dd}_{text}.pdf"
+            
+            # 기존 파일 경로와 새 파일 경로 생성
+            old_path = os.path.join(folder_path, file)
+            new_path = os.path.join(folder_path, new_name)
+            
+            # 파일 이름 변경
+            os.rename(old_path, new_path)
+            print(f"Renamed: {file} -> {new_name}")
+        else:
+            print(f"Skipped: {file} (not matching pattern)")
+
+# 사용 예시
+folder_path = "path/to/your/folder"  # 파일이 저장된 폴더 경로
+rename_files(folder_path)
