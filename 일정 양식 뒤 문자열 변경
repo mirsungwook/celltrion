@@ -1,0 +1,28 @@
+import os
+
+def rename_files_in_folder(folder_path, user_suffix):
+    # 폴더 경로의 모든 파일 목록 가져오기
+    for filename in os.listdir(folder_path):
+        # 파일 이름이 "6개의숫자 - 5개의숫자" 형식인지 확인
+        if " - " in filename and filename.split(" - ")[0].isdigit():
+            try:
+                # " - "를 기준으로 파일 이름 분리
+                prefix, number_part = filename.split(" - ")
+                # 숫자 5개 부분만 추출
+                number_part = number_part[:5]
+                # 새로운 파일 이름 생성
+                new_filename = f"{prefix} - {number_part}{user_suffix}"
+                # 파일 이름 변경
+                old_file_path = os.path.join(folder_path, filename)
+                new_file_path = os.path.join(folder_path, new_filename)
+                os.rename(old_file_path, new_file_path)
+                print(f"Renamed: {filename} -> {new_filename}")
+            except Exception as e:
+                print(f"Error renaming {filename}: {e}")
+
+# 사용자 입력 받기
+folder_path = input("폴더 경로를 입력하세요: ").strip()
+user_suffix = input("추가할 통일된 문자를 입력하세요: ").strip()
+
+# 함수 실행
+rename_files_in_folder(folder_path, user_suffix)
