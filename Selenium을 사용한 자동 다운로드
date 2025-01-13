@@ -1,0 +1,39 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+import time
+import os
+
+def download_scanned_files():
+    # 브라우저 설정
+    options = webdriver.ChromeOptions()
+    download_dir = "C:/스캔_다운로드"  # 다운로드 폴더 경로
+    prefs = {"download.default_directory": download_dir}
+    options.add_experimental_option("prefs", prefs)
+
+    # 브라우저 실행
+    driver = webdriver.Chrome(options=options)
+    driver.get("http://회사홈페이지_주소")  # 회사 홈페이지 URL
+
+    # 로그인 과정 (ID, 비밀번호 입력)
+    driver.find_element(By.ID, "username").send_keys("사용자ID")
+    driver.find_element(By.ID, "password").send_keys("비밀번호")
+    driver.find_element(By.ID, "login-button").click()
+
+    # 파일 다운로드 페이지로 이동
+    time.sleep(3)  # 페이지 로딩 대기
+    driver.find_element(By.LINK_TEXT, "스캔 파일").click()
+
+    # 파일 다운로드 버튼 클릭 (예시)
+    time.sleep(2)
+    download_buttons = driver.find_elements(By.CLASS_NAME, "download-button")
+    for button in download_buttons:
+        button.click()
+        time.sleep(1)  # 다운로드 간격 조정
+
+    # 브라우저 종료
+    driver.quit()
+
+    print(f"파일이 {download_dir}에 저장되었습니다.")
+
+download_scanned_files()
