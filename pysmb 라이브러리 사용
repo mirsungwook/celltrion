@@ -1,0 +1,40 @@
+from smb.SMBConnection import SMBConnection
+import os
+
+def download_smb_files(hostname, shared_folder, username, password, local_dir):
+    """
+    SMB 네트워크에서 파일을 다운로드합니다.
+
+    :param hostname: SMB 서버 주소
+    :param shared_folder: 공유 폴더 이름
+    :param username: 사용자 이름
+    :param password: 비밀번호
+    :param local_dir: 로컬 저장 경로
+    """
+    # SMB 연결 설정
+    conn = SMBConnection(username, password, "client_name", "server_name", use_ntlm_v2=True)
+    assert conn.connect(hostname, 139)  # 기본 SMB 포트: 139 또는 445
+
+    # 공유 폴더 내 파일 목록 가져오기
+    files = conn.listPath(shared_folder, "/")
+    for file in files:
+        if not file.isDirectory:  # 파일만 다운로드
+            remote_path = file.filename
+            local_path = os.path.join(local_dir, remote_path)
+
+            # 파일 다운로드
+            with open(local_path, 'wb') as local_file:
+                conn.retrieveFile(shared_folder, f"/{remote_path}", local_file)
+            print(f"다운로드 완료: {remote_path}")
+
+    # 연결 종료
+    conn.close()
+
+# 사용 예시
+download_smb_files(
+    hostname="192.168.0.100",  # SMB 서버 주소
+    shared_folder="shared/scanned_files",  # 공유 폴더 이름
+    username="사용자명",  # SMB 사용자 이름
+    password="비밀번호",  # SMB 비밀번호
+    local_dir="C:/스캔_다운로드"  # 로컬 저장 경로
+)
