@@ -1,0 +1,30 @@
+import os
+from PyPDF2 import PdfReader, PdfWriter
+
+# 폴더 경로 지정
+folder_path = "path_to_your_folder"  # PDF 파일이 있는 폴더 경로
+output_folder = "output_folder"  # 출력 파일을 저장할 폴더 경로
+
+# 출력 폴더가 없으면 생성
+os.makedirs(output_folder, exist_ok=True)
+
+# 폴더 내 모든 파일 확인
+for file_name in os.listdir(folder_path):
+    if file_name.endswith(".pdf"):
+        file_path = os.path.join(folder_path, file_name)
+        
+        # PDF 읽기
+        reader = PdfReader(file_path)
+        writer = PdfWriter()
+        
+        # 각 페이지를 90도씩 3번 회전 (총 270도)
+        for page in reader.pages:
+            page.rotate(270)
+            writer.add_page(page)
+        
+        # 결과 PDF 저장
+        output_file_path = os.path.join(output_folder, f"rotated_{file_name}")
+        with open(output_file_path, "wb") as output_file:
+            writer.write(output_file)
+        
+        print(f"Processed: {file_name} -> {output_file_path}")
